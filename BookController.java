@@ -72,4 +72,11 @@ public class BookController {
         bookRepository.deleteById(id);
         return "redirect:/books";
     }
+
+    @GetMapping("/{id}")
+    public String viewBookDetails(@PathVariable Long id, Model model) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
+        model.addAttribute("book", book);
+        return "book-detail";
+    }
 }

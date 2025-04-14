@@ -57,7 +57,7 @@ public class AuthController {
         return "home";
     }
 
-    // New: Dashboard page after login
+    //  Dashboard page after login
     @GetMapping("/dashboard")
     public String dashboardPage(Principal principal, Model model) {
         model.addAttribute("username", principal.getName());
