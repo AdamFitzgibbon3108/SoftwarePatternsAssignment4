@@ -2,10 +2,14 @@ package com.bookshop.controller;
 
 import com.bookshop.entity.Book;
 import com.bookshop.repository.BookRepository;
+import com.bookshop.sorting.SortStrategy;
+import com.bookshop.sorting.SortStrategyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -15,8 +19,32 @@ public class BookController {
     private BookRepository bookRepository;
 
     @GetMapping
-    public String listBooks(Model model) {
-        model.addAttribute("books", bookRepository.findAll());
+    public String listBooks(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            Model model) {
+
+        // Step 1: Search
+        List<Book> books;
+        if (search != null && !search.isEmpty()) {
+            books = bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublisherContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+                    search, search, search, search
+            );
+        } else {
+            books = bookRepository.findAll();
+        }
+
+        // Step 2: Apply Sorting (Strategy Pattern)
+        SortStrategy strategy = SortStrategyFactory.getStrategy(sortBy);
+        if (strategy != null) {
+            books = strategy.sort(books);
+        }
+
+        // Step 3: Pass data to view
+        model.addAttribute("books", books);
+        model.addAttribute("search", search);
+        model.addAttribute("sortBy", sortBy);
+
         return "book-list";
     }
 
@@ -45,4 +73,3 @@ public class BookController {
         return "redirect:/books";
     }
 }
-

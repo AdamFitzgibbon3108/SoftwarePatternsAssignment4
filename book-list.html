@@ -4,21 +4,56 @@
     <title>Book List</title>
 </head>
 <body>
+
 <h2>Books</h2>
-<a th:href="@{/books/new}">Add New Book</a>
+
+<!-- Back to Dashboard Button -->
+<p><a th:href="@{/dashboard}"><button>Back to Dashboard</button></a></p>
+
+<!-- Search & Sort Form -->
+<form method="get" th:action="@{/books}">
+    <label for="search">Search:</label>
+    <input type="text" id="search" name="search" th:value="${search}" placeholder="Title, Author, Publisher, Category" />
+
+    <label for="sortBy">Sort By:</label>
+    <select id="sortBy" name="sortBy">
+        <option th:selected="${sortBy == null}">-- None --</option>
+        <option value="title" th:selected="${sortBy == 'title'}">Title</option>
+        <option value="price" th:selected="${sortBy == 'price'}">Price</option>
+        <!-- Add more options like author, publisher if strategies exist -->
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
+
+<!-- Add New Book Link (Admins Only) -->
+<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <p><a th:href="@{/books/new}">Add New Book</a></p>
+</div>
+
 <table border="1">
     <tr>
-        <th>Title</th><th>Author</th><th>Price</th><th>Actions</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Publisher</th>
+        <th>ISBN</th>
+
     </tr>
     <tr th:each="book : ${books}">
         <td th:text="${book.title}"></td>
         <td th:text="${book.author}"></td>
         <td th:text="${book.price}"></td>
-        <td>
-            <a th:href="@{'/books/edit/' + ${book.id}}">Edit</a>
-            <a th:href="@{'/books/delete/' + ${book.id}}">Delete</a>
-        </td>
+        <td th:text="${book.category}"></td>
+        <td th:text="${book.publisher}"></td>
+        <td th:text="${book.isbn}"></td>
+ 
     </tr>
 </table>
+
+
 </body>
 </html>
+
+
