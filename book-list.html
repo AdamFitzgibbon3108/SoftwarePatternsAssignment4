@@ -20,7 +20,6 @@
         <option th:selected="${sortBy == null}">-- None --</option>
         <option value="title" th:selected="${sortBy == 'title'}">Title</option>
         <option value="price" th:selected="${sortBy == 'price'}">Price</option>
-        <!-- Add more options like author, publisher if strategies exist -->
     </select>
 
     <button type="submit">Apply</button>
@@ -31,6 +30,7 @@
     <p><a th:href="@{/books/new}">Add New Book</a></p>
 </div>
 
+<!-- Book Table -->
 <table border="1">
     <tr>
         <th>Title</th>
@@ -39,21 +39,29 @@
         <th>Category</th>
         <th>Publisher</th>
         <th>ISBN</th>
-
+        <th th:if="${#authorization.expression('hasRole(''CUSTOMER'')')}">Add to Cart</th>
     </tr>
+
     <tr th:each="book : ${books}">
-        <td th:text="${book.title}"></td>
+        <!-- Title as clickable link -->
+        <td>
+            <a th:href="@{'/books/' + ${book.id}}" th:text="${book.title}"></a>
+        </td>
         <td th:text="${book.author}"></td>
-        <td th:text="${book.price}"></td>
+        <td th:text="${#numbers.formatDecimal(book.price, 1, 2)}"></td>
         <td th:text="${book.category}"></td>
         <td th:text="${book.publisher}"></td>
         <td th:text="${book.isbn}"></td>
- 
+
+        <!-- Add to Cart form (Customers only) -->
+        <td th:if="${#authorization.expression('hasRole(''CUSTOMER'')')}">
+            <form th:action="@{'/cart/add/' + ${book.id}}" method="post">
+                <input type="number" name="quantity" value="1" min="1" style="width: 50px;" />
+                <button type="submit">Add</button>
+            </form>
+        </td>
     </tr>
 </table>
 
-
 </body>
 </html>
-
-

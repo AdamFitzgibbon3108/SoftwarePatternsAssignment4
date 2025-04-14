@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Details</title>
+    <style>
+        .book-detail {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .out-of-stock {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="book-detail">
+    <h2 th:text="${book.title}">Book Title</h2>
+
+    
+
+    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Publisher:</strong> <span th:text="${book.publisher}"></span></p>
+    <p><strong>Category:</strong> <span th:text="${book.category}"></span></p>
+    <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+    <p><strong>Price:</strong> $<span th:text="${#numbers.formatDecimal(book.price, 1, 2)}"></span></p>
+
+    <p>
+        <strong>Stock:</strong>
+        <span th:if="${book.stock > 0}" th:text="${book.stock} + ' in stock'"></span>
+        <span th:if="${book.stock == 0}" class="out-of-stock">Out of Stock</span>
+    </p>
+
+    <!-- Only show Add to Cart if customer and book in stock -->
+    <div th:if="${book.stock > 0 and #authorization.expression('hasRole(''CUSTOMER'')')}">
+        <form th:action="@{'/cart/add/' + ${book.id}}" method="post">
+            <label>Quantity:</label>
+            <input type="number" name="quantity" value="1" min="1" th:attr="max=${book.stock}" style="width: 60px;" />
+            <button type="submit">Add to Cart</button>
+        </form>
+    </div>
+
+    <!-- Optional: Review Placeholder -->
+    <p><strong>Reviews:</strong> No reviews yet.</p>
+
+    <p><a th:href="@{/books}"><button>Back to Catalogue</button></a></p>
+</div>
+
+</body>
+</html>
+

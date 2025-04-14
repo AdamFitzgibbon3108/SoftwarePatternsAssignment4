@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Shopping Cart</title>
+</head>
+<body>
+
+<h2>Your Cart</h2>
+
+<!-- Back to book list (top) -->
+<p><a th:href="@{/books}"><button>Continue Shopping</button></a></p>
+
+<!-- Flash error message -->
+<div th:if="${error}" style="color: red; font-weight: bold;">
+    <p th:text="${error}"></p>
+</div>
+
+<!-- Flash general message -->
+<div th:if="${message}" style="color: green; font-weight: bold;">
+    <p th:text="${message}"></p>
+</div>
+
+<!-- If cart is empty -->
+<div th:if="${#lists.isEmpty(items)}">
+    <p>Your cart is empty.</p>
+</div>
+
+<!-- If cart has items -->
+<div th:if="${not #lists.isEmpty(items)}">
+    <table border="1">
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.book.title}"></td>
+            <td th:text="${item.book.author}"></td>
+            <td th:text="${#numbers.formatDecimal(item.book.price, 1, 2)}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${#numbers.formatDecimal(item.totalPrice, 1, 2)}"></td>
+            <td>
+                <a th:href="@{'/cart/remove/' + ${item.book.id}}">Remove</a>
+            </td>
+        </tr>
+    </table>
+
+    <p><strong>Total: </strong>$<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span></p>
+
+    <form th:action="@{/cart/checkout}" method="post">
+        <button type="submit">Checkout</button>
+    </form>
+
+    <!-- Back to book list (bottom) -->
+    <p><a th:href="@{/books}"><button>Back to Book List</button></a></p>
+</div>
+
+</body>
+</html>
+
+
+
