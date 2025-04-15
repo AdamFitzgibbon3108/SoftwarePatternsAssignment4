@@ -22,20 +22,22 @@ public class User {
     private String role; // e.g., "CUSTOMER" or "ADMIN"
 
     private String shippingAddress;
-    private String paymentMethod;
+    private String cardNumber;
+    private String cardType;
 
     // Constructors
     public User() {
     }
 
     public User(String username, String password, String email, String role,
-                String shippingAddress, String paymentMethod) {
+                String shippingAddress, String cardNumber, String cardType) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
         this.shippingAddress = shippingAddress;
-        this.paymentMethod = paymentMethod;
+        this.cardNumber = cardNumber;
+        this.cardType = cardType;
     }
 
     // Getters and Setters
@@ -88,12 +90,20 @@ public class User {
         this.shippingAddress = shippingAddress;
     }
 
-    public String getPaymentMethod() {
-        return paymentMethod;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
     }
 }
 

@@ -2,39 +2,109 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Order Successful</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+        }
+
+        h3 {
+            margin-top: 30px;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            margin-right: 10px;
+            padding: 10px 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Thank you for your order!</h2>
+<div class="container">
+    <h2>Thank You for Your Order!</h2>
 
-<p>Your order has been successfully placed.</p>
+    <p>Your order has been successfully placed.</p>
 
-<p><strong>Order Date:</strong> 
-   <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
-</p>
+    <p><strong>Order Date:</strong> 
+        <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+    </p>
 
-<p><strong>Total Amount:</strong> 
-   $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
-</p>
+    <p><strong>Total Amount:</strong> 
+        $<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+    </p>
 
-<h3>Order Details:</h3>
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Quantity</th>
-        <th>Unit Price</th>
-        <th>Subtotal</th>
-    </tr>
-    <tr th:each="item : ${order.items}">
-        <td th:text="${item.book.title}"></td>
-        <td th:text="${item.quantity}"></td>
-        <td>$<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span></td>
-        <td>$<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span></td>
-    </tr>
-</table>
+    <h3>Order Details</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${order.items}">
+                <td th:text="${item.book.title}">Title</td>
+                <td th:text="${item.quantity}">1</td>
+                <td>$<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">0.00</span></td>
+                <td>$<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">0.00</span></td>
+            </tr>
+        </tbody>
+    </table>
 
-<p><a th:href="@{/books}"><button>Continue Shopping</button></a></p>
-<p><a th:href="@{/dashboard}"><button>Go to Dashboard</button></a></p>
+    <a th:href="@{/books}" class="btn">Continue Shopping</a>
+    <a th:href="@{/dashboard}" class="btn">Go to Dashboard</a>
+</div>
 
 </body>
 </html>
+

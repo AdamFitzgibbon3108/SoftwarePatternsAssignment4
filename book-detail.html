@@ -43,12 +43,37 @@
         }
 
         .review-rating {
-            color: goldenrod;
             font-weight: bold;
+        }
+
+        .stars {
+            color: goldenrod;
+            font-size: 20px;
         }
 
         button {
             margin-top: 10px;
+        }
+
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+            font-size: 24px;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            cursor: pointer;
+            color: lightgray;
+        }
+
+        .star-rating input[type="radio"]:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: gold;
         }
     </style>
 </head>
@@ -69,7 +94,6 @@
         <span th:if="${book.stock == 0}" class="out-of-stock">Out of Stock</span>
     </p>
 
-    <!-- Only show Add to Cart if customer and book in stock -->
     <div th:if="${book.stock > 0 and #authorization.expression('hasRole(''CUSTOMER'')')}">
         <form th:action="@{'/cart/add/' + ${book.id}}" method="post">
             <label>Quantity:</label>
@@ -87,38 +111,45 @@
         </div>
 
         <div th:each="review : ${reviews}" class="review-box">
-            <p class="review-rating">Rating: <span th:text="${review.rating}">5</span>/5</p>
+            <div class="review-rating">
+                <span class="stars" th:each="i : ${#numbers.sequence(1, 5)}">
+                    <span th:if="${i <= review.rating}">★</span>
+                    <span th:if="${i > review.rating}">☆</span>
+                </span>
+                (<span th:text="${review.rating}">5</span>/5)
+            </div>
             <p><strong>User:</strong> <span th:text="${review.user.username}">Username</span></p>
             <p th:text="${review.comment}">This book is great!</p>
         </div>
 
-<!-- Review Form -->
-<div th:if="${canReview}">
-    <form th:action="@{'/reviews/book/' + ${book.id}}" method="post">
-        <label for="rating">Rating:</label>
-        <select name="rating" id="rating">
-            <option value="5">5 - Excellent</option>
-            <option value="4">4 - Good</option>
-            <option value="3">3 - Average</option>
-            <option value="2">2 - Poor</option>
-            <option value="1">1 - Terrible</option>
-        </select><br><br>
+        <!-- Review Form -->
+        <div th:if="${canReview}">
+            <form th:action="@{'/reviews/book/' + ${book.id}}" method="post">
+                <label>Rating:</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                </div><br><br>
 
-        <label for="comment">Comment:</label><br>
-        <textarea name="comment" rows="3" cols="50" required></textarea><br>
-        <button type="submit">Submit Review</button>
-    </form>
-</div>
+                <label for="comment">Comment:</label><br>
+                <textarea name="comment" rows="3" cols="50" required></textarea><br>
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
 
-<div th:if="${alreadyReviewed}">
-    <p><em>You have already submitted a review for this book.</em></p>
-</div>
-
+        <div th:if="${alreadyReviewed}">
+            <p><em>You have already submitted a review for this book.</em></p>
+        </div>
+    </div>
 
     <p><a th:href="@{/books}"><button>Back to Catalogue</button></a></p>
 </div>
 
 </body>
 </html>
+
 
 
