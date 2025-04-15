@@ -25,6 +25,8 @@ public class User {
     private String cardNumber;
     private String cardType;
 
+    private double totalSpent; // New field for loyalty/discount system
+
     // Constructors
     public User() {
     }
@@ -38,6 +40,7 @@ public class User {
         this.shippingAddress = shippingAddress;
         this.cardNumber = cardNumber;
         this.cardType = cardType;
+        this.totalSpent = 0.0;
     }
 
     // Getters and Setters
@@ -105,5 +108,12 @@ public class User {
     public void setCardType(String cardType) {
         this.cardType = cardType;
     }
-}
 
+    public double getTotalSpent() {
+        return totalSpent;
+    }
+
+    public void setTotalSpent(double totalSpent) {
+        this.totalSpent = totalSpent;
+    }
+}
