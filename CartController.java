@@ -4,6 +4,7 @@ import com.bookshop.cart.CartItem;
 import com.bookshop.cart.ShoppingCart;
 import com.bookshop.entity.*;
 import com.bookshop.repository.*;
+import com.bookshop.service.DiscountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,10 +36,12 @@ public class CartController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DiscountService discountService;
+
     // View cart
     @GetMapping
     public String viewCart(Model model, @ModelAttribute("error") String error, @ModelAttribute("message") String message) {
-        System.out.println(">> Viewing cart. Items in cart: " + shoppingCart.getItems().size());
         model.addAttribute("items", shoppingCart.getItems());
         model.addAttribute("total", shoppingCart.getTotal());
         if (!error.isEmpty()) model.addAttribute("error", error);
@@ -46,53 +49,42 @@ public class CartController {
         return "cart";
     }
 
-    // Add book to cart
+    // Add to cart
     @PostMapping("/add/{bookId}")
     public String addToCart(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int quantity) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
+        Book book = bookRepository.findById(bookId).orElseThrow();
         CartItem item = new CartItem(book, quantity);
         shoppingCart.addItem(bookId, item);
-        System.out.println(">> Book added to cart: " + book.getTitle() + " x" + quantity);
         return "redirect:/cart";
     }
 
-    // Remove book from cart
+    // Remove from cart
     @GetMapping("/remove/{bookId}")
     public String removeFromCart(@PathVariable Long bookId) {
         shoppingCart.removeItem(bookId);
-        System.out.println(">> Book removed from cart. ID: " + bookId);
         return "redirect:/cart";
     }
 
-    // Checkout and save order
+    // Checkout
     @PostMapping("/checkout")
     public String checkout(RedirectAttributes redirectAttributes, Principal principal) {
-        System.out.println(">> Attempting checkout for user: " + principal.getName());
-        System.out.println(">> Cart size: " + shoppingCart.getItems().size());
-
         if (shoppingCart.isEmpty()) {
-            System.out.println(">> Checkout aborted: Cart is empty.");
             redirectAttributes.addFlashAttribute("message", "Your cart is empty.");
             return "redirect:/cart";
         }
 
         User user = userRepository.findByUsername(principal.getName()).orElseThrow();
-        System.out.println(">> Found user: " + user.getUsername());
-
+        List<OrderItem> orderItems = new ArrayList<>();
         Order order = new Order();
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setTotalAmount(shoppingCart.getTotal());
 
-        List<OrderItem> orderItems = new ArrayList<>();
+        double total = 0;
 
         for (CartItem cartItem : shoppingCart.getItems()) {
             Book book = cartItem.getBook();
 
-            System.out.println(">> Processing item: " + book.getTitle() + " (Qty: " + cartItem.getQuantity() + ")");
-
             if (book.getStock() < cartItem.getQuantity()) {
-                System.out.println(">> Not enough stock for: " + book.getTitle());
                 redirectAttributes.addFlashAttribute("error", "Not enough stock for: " + book.getTitle());
                 return "redirect:/cart";
             }
@@ -106,24 +98,45 @@ public class CartController {
             orderItem.setPrice(book.getPrice());
             orderItem.setOrder(order);
             orderItems.add(orderItem);
+
+            total += book.getPrice() * cartItem.getQuantity();
         }
 
+        double discountRate = discountService.calculateDiscount(user, total);
+        double discountAmount = total * discountRate;
+        double finalTotal = total - discountAmount;
+
+        List<String> discountReasons = discountService.getDiscountReasons(user, total);
+
         order.setItems(orderItems);
+        order.setTotalAmount(finalTotal);
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItems);
-
         shoppingCart.clear();
-        System.out.println(">> Checkout completed. Order saved and cart cleared.");
 
         redirectAttributes.addFlashAttribute("order", order);
+        redirectAttributes.addFlashAttribute("originalTotal", total);
+        redirectAttributes.addFlashAttribute("discountAmount", discountAmount);
+        redirectAttributes.addFlashAttribute("discountApplied", discountRate > 0);
+        redirectAttributes.addFlashAttribute("discountReasons", discountReasons);
+
         return "redirect:/cart/success";
     }
 
-    // Show success page
     @GetMapping("/success")
-    public String checkoutSuccess(@ModelAttribute("order") Order order, Model model) {
-        System.out.println(">> Displaying order success page for Order ID: " + (order != null ? order.getId() : "null"));
+    public String checkoutSuccess(@ModelAttribute("order") Order order,
+                                  @ModelAttribute("originalTotal") Double originalTotal,
+                                  @ModelAttribute("discountAmount") Double discountAmount,
+                                  @ModelAttribute("discountApplied") Boolean discountApplied,
+                                  @ModelAttribute("discountReasons") List<String> discountReasons,
+                                  Model model) {
+
         model.addAttribute("order", order);
+        model.addAttribute("originalTotal", originalTotal);
+        model.addAttribute("discountAmount", discountAmount);
+        model.addAttribute("discountApplied", discountApplied);
+        model.addAttribute("discountReasons", discountReasons);
+
         return "checkout-success";
     }
 }
