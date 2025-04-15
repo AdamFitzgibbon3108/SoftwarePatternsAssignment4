@@ -39,12 +39,12 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("CUSTOMER");
 
-        // Ensure additional fields are saved (email, shipping address, payment method)
-        // This is redundant if already included in the @ModelAttribute, but explicit is good:
+        // Debug logs to confirm full field capture
         System.out.println(">> Registering: " + user.getUsername());
         System.out.println(">> Email: " + user.getEmail());
         System.out.println(">> Shipping: " + user.getShippingAddress());
-        System.out.println(">> Payment: " + user.getPaymentMethod());
+        System.out.println(">> Card Number: " + user.getCardNumber());
+        System.out.println(">> Card Type: " + user.getCardType());
 
         userRepository.save(user);
 
@@ -57,13 +57,13 @@ public class AuthController {
         return "login";
     }
 
-    // Optional home page (not used if redirected to dashboard after login)
+    // Home page (not used if redirected to dashboard after login)
     @GetMapping("/")
     public String homePage() {
         return "home";
     }
 
-    //  Dashboard page after login
+    // Dashboard page after login
     @GetMapping("/dashboard")
     public String dashboardPage(Principal principal, Model model) {
         model.addAttribute("username", principal.getName());

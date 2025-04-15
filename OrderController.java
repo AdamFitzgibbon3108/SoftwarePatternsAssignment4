@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -27,6 +28,10 @@ public class OrderController {
     public String showOrderHistory(Model model, Principal principal) {
         User user = userRepository.findByUsername(principal.getName()).orElseThrow();
         List<Order> orders = orderRepository.findByUser(user);
+
+        // Sort by orderDate descending
+        orders.sort(Comparator.comparing(Order::getOrderDate).reversed());
+
         model.addAttribute("orders", orders);
         return "order-history";
     }
