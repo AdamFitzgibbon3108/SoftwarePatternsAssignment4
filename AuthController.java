@@ -39,9 +39,15 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("CUSTOMER");
 
+        // Ensure additional fields are saved (email, shipping address, payment method)
+        // This is redundant if already included in the @ModelAttribute, but explicit is good:
+        System.out.println(">> Registering: " + user.getUsername());
+        System.out.println(">> Email: " + user.getEmail());
+        System.out.println(">> Shipping: " + user.getShippingAddress());
+        System.out.println(">> Payment: " + user.getPaymentMethod());
+
         userRepository.save(user);
 
-        // Redirect to login page after successful registration
         return "redirect:/login?success";
     }
 
