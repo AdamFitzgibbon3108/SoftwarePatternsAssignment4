@@ -73,10 +73,10 @@ public class BookController {
         return "redirect:/books";
     }
 
+    // Redirect /books/{id} to the review controller for full details
     @GetMapping("/{id}")
-    public String viewBookDetails(@PathVariable Long id, Model model) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
-        model.addAttribute("book", book);
-        return "book-detail";
+    public String redirectToBookWithReviews(@PathVariable Long id) {
+        return "redirect:/reviews/book/" + id;
     }
 }
+

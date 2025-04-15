@@ -1,6 +1,7 @@
 package com.bookshop.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class Book {
@@ -17,6 +18,9 @@ public class Book {
     private String isbn;
     private String imageUrl;
     private int stock;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 
     // Constructors
     public Book() {}
@@ -105,5 +109,12 @@ public class Book {
     public void setStock(int stock) {
         this.stock = stock;
     }
-}
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+}
