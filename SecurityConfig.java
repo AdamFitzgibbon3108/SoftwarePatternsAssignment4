@@ -18,32 +18,37 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    // Password encoder bean
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Authentication manager (used for manual authentication if needed)
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // Main security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // CSRF protection can be enabled later
+            .csrf().disable()
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/register", "/login", "/", "/css/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/dashboard").hasAnyRole("CUSTOMER", "ADMIN")
                 .requestMatchers("/shop/**", "/cart/**", "/books/**").hasAnyRole("CUSTOMER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true) // Redirect to book dash after login
+                .successHandler((request, response, authentication) -> {
+                    String role = authentication.getAuthorities().iterator().next().getAuthority();
+                    if ("ROLE_ADMIN".equals(role)) {
+                        response.sendRedirect("/admin/dashboard");
+                    } else {
+                        response.sendRedirect("/dashboard");
+                    }
+                })
                 .permitAll()
             )
             .logout(logout -> logout
@@ -54,3 +59,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

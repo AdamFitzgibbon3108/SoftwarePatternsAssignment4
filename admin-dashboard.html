@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 14px 24px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .logout {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Welcome Admin </h2>
+
+    <a th:href="@{/admin/books}" class="btn"> Manage Books</a>
+    <a th:href="@{/admin/orders}" class="btn"> View Orders</a>
+    <a th:href="@{/admin/users}" class="btn"> Manage Users</a>
+    <a th:href="@{/admin/stock}" class="btn"> Restock Inventory</a>
+
+    <div class="logout">
+        <a th:href="@{/logout}" class="btn">Logout</a>
+    </div>
+</div>
+
+</body>
+</html>
+
+
