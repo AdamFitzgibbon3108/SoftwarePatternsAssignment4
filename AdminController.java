@@ -1,16 +1,13 @@
 package com.bookshop.controller;
 
-import com.bookshop.entity.Book;
-import com.bookshop.entity.User;
 import com.bookshop.repository.BookRepository;
 import com.bookshop.repository.UserRepository;
+import com.bookshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -22,17 +19,24 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
-        List<Book> books = bookRepository.findAll();
-        List<User> users = userRepository.findAll();
+        long totalBooks = bookRepository.count();
+        long totalUsers = userRepository.count();
+        long totalOrders = orderRepository.count();
+        Double totalRevenue = orderRepository.sumAllOrderTotals();
+        if (totalRevenue == null) {
+            totalRevenue = 0.0;
+        }
 
-        model.addAttribute("books", books);
-        model.addAttribute("users", users);
-        model.addAttribute("bookCount", books.size());
-        model.addAttribute("userCount", users.size());
+        model.addAttribute("totalBooks", totalBooks);
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalOrders", totalOrders);
+        model.addAttribute("totalRevenue", totalRevenue);
 
         return "admin-dashboard";
     }
 }
-

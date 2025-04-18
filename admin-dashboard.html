@@ -21,7 +21,33 @@
 
         h2 {
             color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
             margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background-color: #ecf0f1;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px;
+            min-width: 160px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-top: 5px;
         }
 
         .btn {
@@ -50,7 +76,26 @@
 <body>
 
 <div class="container">
-    <h2>Welcome Admin </h2>
+    <h2>Welcome Admin</h2>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-label">Total Books</div>
+            <div class="stat-value" th:text="${totalBooks}">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" th:text="${totalUsers}">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-value" th:text="${totalOrders}">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value" th:text="'€' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">€0.00</div>
+        </div>
+    </div>
 
     <a th:href="@{/admin/books}" class="btn"> Manage Books</a>
     <a th:href="@{/admin/orders}" class="btn"> View Orders</a>
@@ -64,5 +109,3 @@
 
 </body>
 </html>
-
-
