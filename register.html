@@ -72,6 +72,9 @@
     <div th:if="${error}" class="error" th:text="${error}"></div>
 
     <form th:action="@{/register}" th:object="${user}" method="post">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" th:field="*{fullName}" required />
+
         <label for="username">Username</label>
         <input type="text" id="username" th:field="*{username}" required />
 
@@ -104,4 +107,5 @@
 
 </body>
 </html>
+
 

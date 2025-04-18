@@ -1,6 +1,7 @@
 package com.bookshop.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -21,22 +22,32 @@ public class User {
     @Column(nullable = false)
     private String role; // e.g., "CUSTOMER" or "ADMIN"
 
+    private String fullName; // NEW: Full name of the user
+
     private String shippingAddress;
     private String cardNumber;
     private String cardType;
 
-    private double totalSpent; // New field for loyalty/discount system
+    private double totalSpent;
 
-    // Constructors
-    public User() {
+    private LocalDateTime createdAt; // NEW: Registration date
+
+    // Automatically set the registration time before insert
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
+    // Constructors
+    public User() {}
+
     public User(String username, String password, String email, String role,
-                String shippingAddress, String cardNumber, String cardType) {
+                String fullName, String shippingAddress, String cardNumber, String cardType) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.fullName = fullName;
         this.shippingAddress = shippingAddress;
         this.cardNumber = cardNumber;
         this.cardType = cardType;
@@ -85,6 +96,14 @@ public class User {
         this.role = role;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public String getShippingAddress() {
         return shippingAddress;
     }
@@ -115,5 +134,13 @@ public class User {
 
     public void setTotalSpent(double totalSpent) {
         this.totalSpent = totalSpent;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
