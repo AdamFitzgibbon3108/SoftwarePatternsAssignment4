@@ -1,7 +1,11 @@
 package com.bookshop.controller;
 
 import com.bookshop.entity.Book;
+import com.bookshop.entity.Order;
+import com.bookshop.entity.OrderItem;
 import com.bookshop.repository.BookRepository;
+import com.bookshop.repository.OrderItemRepository;
+import com.bookshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +21,12 @@ public class AdminBookController {
     @Autowired
     private BookRepository bookRepository;
 
-    // Show all books with optional search and sort
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
     @GetMapping
     public String listBooks(Model model,
                             @RequestParam(value = "query", required = false) String query,
@@ -36,10 +45,10 @@ public class AdminBookController {
                 case "price_desc" -> books = bookRepository.findAllByOrderByPriceDesc();
                 case "stock" -> books = bookRepository.findAllByOrderByStockAsc();
                 case "stock_desc" -> books = bookRepository.findAllByOrderByStockDesc();
-                default -> books = bookRepository.findAllByOrderByTitleAsc(); // default A-Z
+                default -> books = bookRepository.findAllByOrderByTitleAsc();
             }
         } else {
-            books = bookRepository.findAllByOrderByTitleAsc(); // default if nothing is selected
+            books = bookRepository.findAllByOrderByTitleAsc();
         }
 
         model.addAttribute("books", books);
@@ -84,10 +93,26 @@ public class AdminBookController {
     @GetMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            bookRepository.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "Book deleted successfully.");
+            Book book = bookRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
+
+            // Remove related order items and potentially empty orders
+            List<OrderItem> allItems = orderItemRepository.findAll();
+            for (OrderItem item : allItems) {
+                if (item.getBook().getId().equals(id)) {
+                    Order order = item.getOrder();
+                    order.getItems().remove(item);
+                    orderItemRepository.delete(item);
+
+                    if (order.getItems().isEmpty()) {
+                        orderRepository.delete(order);
+                    }
+                }
+            }
+
+            bookRepository.delete(book);
+            redirectAttributes.addFlashAttribute("success", "Book and any related orders deleted.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("success", "Book could not be deleted (it may be part of an order).");
+            redirectAttributes.addFlashAttribute("success", "Book could not be deleted.");
         }
         return "redirect:/admin/books";
     }
