@@ -20,14 +20,21 @@
 
         h2 {
             color: #2c3e50;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             text-align: center;
+        }
+
+        .subtext {
+            color: #888;
+            font-size: 15px;
+            text-align: center;
+            margin-bottom: 25px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         th, td {
@@ -56,12 +63,23 @@
         .btn-back:hover {
             background-color: #2980b9;
         }
+
+        .clickable {
+            color: #2980b9;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .clickable:hover {
+            color: #1a6fa2;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Customer List</h2>
+    <div class="subtext">Click a customer's name to view their order history.</div>
 
     <table>
         <thead>
@@ -73,7 +91,10 @@
         </thead>
         <tbody>
         <tr th:each="customer : ${customers}">
-            <td th:text="${customer.fullName}">Name</td>
+            <td>
+                <a th:href="@{/admin/users/{id}/orders(id=${customer.id})}" class="clickable"
+                   th:text="${customer.fullName}">Name</a>
+            </td>
             <td th:text="${customer.email}">Email</td>
             <td th:text="${#temporals.format(customer.createdAt, 'dd MMM yyyy HH:mm')}">Date</td>
         </tr>
@@ -85,3 +106,4 @@
 
 </body>
 </html>
+
