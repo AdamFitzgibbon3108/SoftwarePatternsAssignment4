@@ -46,6 +46,15 @@
             background-color: #f2f2f2;
         }
 
+        th a {
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        th a:hover {
+            text-decoration: underline;
+        }
+
         .back-btn {
             display: inline-block;
             margin-top: 30px;
@@ -73,9 +82,21 @@
     <table>
         <thead>
         <tr>
-            <th>Order ID</th>
-            <th>Total Amount</th>
-            <th>Order Date</th>
+            <th>
+                <a th:href="@{|/admin/users/${customer.id}/orders?sort=id&dir=${reverseDir}|}">
+                    Order ID
+                </a>
+            </th>
+            <th>
+                <a th:href="@{|/admin/users/${customer.id}/orders?sort=amount&dir=${reverseDir}|}">
+                    Total Amount
+                </a>
+            </th>
+            <th>
+                <a th:href="@{|/admin/users/${customer.id}/orders?sort=date&dir=${reverseDir}|}">
+                    Order Date
+                </a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -92,3 +113,4 @@
 
 </body>
 </html>
+

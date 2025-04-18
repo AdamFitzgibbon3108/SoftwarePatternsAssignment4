@@ -30,7 +30,7 @@ public class User {
 
     private double totalSpent;
 
-    private LocalDateTime createdAt; // NEW: Registration date
+    private LocalDateTime createdAt; // Registration date
 
     // Automatically set the registration time before insert
     @PrePersist
