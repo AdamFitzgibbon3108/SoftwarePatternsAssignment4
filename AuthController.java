@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Controller
 public class AuthController {
@@ -29,7 +30,9 @@ public class AuthController {
     // Handle form submission
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, Model model) {
-        // Check if username already exists
+    	user.setCreatedAt(LocalDateTime.now());
+    	user.setFullName(user.getFullName()); 
+
         if (userRepository.existsByUsername(user.getUsername())) {
             model.addAttribute("error", "Username already taken");
             return "register";
@@ -39,8 +42,9 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("CUSTOMER");
 
-        // Debug logs to confirm full field capture
+        // Debug log all fields including full name
         System.out.println(">> Registering: " + user.getUsername());
+        System.out.println(">> Full Name: " + user.getFullName());
         System.out.println(">> Email: " + user.getEmail());
         System.out.println(">> Shipping: " + user.getShippingAddress());
         System.out.println(">> Card Number: " + user.getCardNumber());
@@ -50,6 +54,7 @@ public class AuthController {
 
         return "redirect:/login?success";
     }
+
 
     // Show custom login page
     @GetMapping("/login")
