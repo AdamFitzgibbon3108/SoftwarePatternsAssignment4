@@ -1,3 +1,4 @@
+
 # Software Patterns Assignment 4 – Online Bookshop
 
 ## Overview
@@ -102,13 +103,44 @@ This project is a fully functional online Bookshop management system built using
 
 ## Screenshots
 
-*Include screenshots of :*
-- Admin Dashboard
-- Book Management
-- Customer List
-- Order History
-- Registration and Login
-- Cart and Checkout
+### Admin Dashboard
+![Admin Dashboard](./screenshots/admindash.png)
+
+### Manage Books
+![Manage Books](./screenshots/AdminBook.jpg)
+
+### Add New Book
+![Add Book](./screenshots/AdminAddBook.jpg)
+
+### Edit Book
+![Edit Book](./screenshots/AdminEditBook.png)
+
+### Book Sorting Options (Strategy Pattern)
+![Sort Books](./screenshots/AdminSortBy.jpg)
+
+### Manage Customers (Iterator Pattern)
+![Customer List](./screenshots/AdminCustomerList.jpg)
+
+### Customer Order History
+![Customer Orders](./screenshots/AdminCustomerOrder.png)
+
+### Register
+![Register](./screenshots/Register.png)
+
+### Login
+![Login](./screenshots/Login.png)
+
+### Customer Dashboard
+![Customer Dashboard](./screenshots/CustomerDash.png)
+
+### Book Catalogue (Customer Side)
+![Book Catalogue](./screenshots/BookCatalogue.png)
+
+### Cart
+![Cart](./screenshots/Cart.png)
+
+### Checkout / Order Confirmation
+![Checkout](./screenshots/checkout.png)
 
 ---
 
@@ -129,7 +161,6 @@ This project is a fully functional online Bookshop management system built using
    - Customer: `http://localhost:8080/register` or `/login`
 
 ---
-
 
 # System Architecture & Database Report
 
